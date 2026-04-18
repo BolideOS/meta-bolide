@@ -8,8 +8,10 @@ BolideOS is not a fork of AsteroidOS — these are independent apps that install
 
 | Repo | Description |
 |------|-------------|
+| [bolide-launcher](https://github.com/BolideOS/bolide-launcher) | Launcher — watch face, app grid, notifications, quick settings, Garmin-style glances |
 | [bolide-powerd](https://github.com/BolideOS/bolide-powerd) | Power management daemon — battery health, coulomb counting, power profiles |
 | [bolide-settings](https://github.com/BolideOS/bolide-settings) | Settings app — power profiles UI, battery health display, airplane mode |
+| [bolide-fitness](https://github.com/BolideOS/bolide-fitness) | Workout & fitness — HR zones, GPS tracks, activity types |
 | [meta-bolide](https://github.com/BolideOS/meta-bolide) | Yocto/OE layer for building BolideOS apps |
 
 ## Install on a watch
