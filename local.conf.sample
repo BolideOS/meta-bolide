@@ -1,0 +1,13 @@
+# ─── BolideOS local development configuration ───────────────────────────────
+# Add these lines to your asteroid/build/conf/local.conf to build bolide
+# packages from local source trees instead of fetching from GitHub.
+#
+# This is optional. Without EXTERNALSRC, bitbake will fetch sources from
+# the SRC_URI in each recipe (github.com/BolideOS/*).
+
+INHERIT += "externalsrc"
+
+EXTERNALSRC:pn-bolide-powerd = "/path/to/bolideos/bolide-powerd"
+EXTERNALSRC:pn-bolide-settings = "/path/to/bolideos/bolide-settings"
+EXTERNALSRC:pn-bolide-launcher = "/path/to/bolideos/bolide-launcher"
+EXTERNALSRC:pn-bolide-fitness = "/path/to/bolideos/bolide-fitness"
