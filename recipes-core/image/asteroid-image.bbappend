@@ -6,4 +6,4 @@
 IMAGE_INSTALL:remove = "asteroid-launcher asteroid-settings"
 
 # Add bolide replacements + new apps
-IMAGE_INSTALL:append = " bolide-launcher bolide-settings bolide-powerd bolide-fitness"
+IMAGE_INSTALL:append = " bolide-launcher bolide-settings bolide-powerd bolide-fitness fonts-roboto-condensed"
