@@ -6,7 +6,8 @@ LIC_FILES_CHKSUM = "file://src/qml/MainScreen.qml;beginline=1;endline=29;md5=dc9
 
 SRC_URI = "git://github.com/BolideOS/bolide-launcher.git;protocol=https;branch=master \
     file://bolide-launcher.service \
-    file://bolide-launcher-precondition"
+    file://bolide-launcher-precondition \
+    file://lipstick.conf"
 SRCREV = "${AUTOREV}"
 PR = "r1"
 PV = "2.1+git${SRCPV}"
@@ -20,7 +21,7 @@ RDEPENDS:${PN} += "qtdeclarative-qmlplugins qml-asteroid mce-qt5 qtwayland-plugi
     asteroid-wallpapers asteroid-launcher-configs"
 
 FILES:${PN} += "/usr/share/bolide-launcher/ /usr/lib/systemd/user/ /usr/share/translations/ \
-    /usr/lib/systemd/user/default.target.wants/ /usr/bin/"
+    /usr/lib/systemd/user/default.target.wants/ /usr/bin/ /usr/share/lipstick/"
 
 # Downgrade QML import versions for Qt 5.12 compatibility
 do_configure:prepend() {
@@ -45,4 +46,8 @@ do_install:append() {
         ln -s /usr/lib/systemd/user/bolide-launcher.service \
             ${D}/usr/lib/systemd/user/default.target.wants/bolide-launcher.service
     fi
+
+    # Default app launcher ordering (bolide-fitness first)
+    install -d ${D}/usr/share/lipstick/
+    install -m 0644 ${UNPACKDIR}/lipstick.conf ${D}/usr/share/lipstick/lipstick.conf
 }

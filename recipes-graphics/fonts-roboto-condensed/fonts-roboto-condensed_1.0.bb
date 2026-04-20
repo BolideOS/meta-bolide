@@ -17,7 +17,7 @@ SRC_URI = " \
     file://RobotoCondensed-VariableFont_wght.ttf \
 "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
     install -d ${D}${datadir}/fonts/
