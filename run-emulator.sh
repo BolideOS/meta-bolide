@@ -155,13 +155,16 @@ launch_emulator() {
     # environment to be sourced.
     #
     # On Wayland compositors (e.g. Hyprland), QEMU GTK's native Wayland backend
-    # does not route absolute mouse events to the USB tablet device unless
-    # grab-on-hover is enabled.  SDL display has working input but broken
-    # virgl rendering (black screen).  GTK + grab-on-hover works for both.
+    # does not route absolute mouse events to the USB tablet device.
+    # Force GTK to use XWayland (GDK_BACKEND=x11) so the usb-tablet gets
+    # proper absolute coordinates without needing grab-on-hover (which traps
+    # the pointer inside the QEMU window).  virgl 3D acceleration still works
+    # through XWayland's EGL support.
     local QEMU_DISPLAY_OPT="${DISPLAY_OPT}"
     if [ "${XDG_SESSION_TYPE:-}" = "wayland" ] && echo "${DISPLAY_OPT}" | grep -q '^-display gtk'; then
-        QEMU_DISPLAY_OPT="-display gtk,gl=on,show-cursor=on,grab-on-hover=on"
-        info "Wayland detected: enabling grab-on-hover for tablet input"
+        export GDK_BACKEND=x11
+        QEMU_DISPLAY_OPT="-display gtk,gl=on,show-cursor=on"
+        info "Wayland detected: forcing XWayland (GDK_BACKEND=x11) for tablet input without grab"
     fi
 
     "${QEMU_BIN}" \
