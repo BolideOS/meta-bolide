@@ -222,6 +222,16 @@ launch_emulator() {
                  /com/nokia/mce/request com.nokia.mce.request.req_display_state_on 2>/dev/null" || true
             info "MCE display blanking disabled."
 
+            # Wallpaper path fixup — bolide-settings looks for wallpapers at
+            # /usr/share/bolide-launcher/wallpapers/ but the base image has
+            # them at /usr/share/asteroid-launcher/wallpapers/.  Create a
+            # symlink until the image is rebuilt with the proper install path.
+            ssh ${SSH_OPTS} -p 2222 root@localhost \
+                "if [ ! -e /usr/share/bolide-launcher/wallpapers ] && [ -d /usr/share/asteroid-launcher/wallpapers ]; then \
+                     mkdir -p /usr/share/bolide-launcher; \
+                     ln -s /usr/share/asteroid-launcher/wallpapers /usr/share/bolide-launcher/wallpapers; \
+                 fi" || true
+
             break
         fi
         retries=$((retries + 1))
