@@ -222,15 +222,20 @@ launch_emulator() {
                  /com/nokia/mce/request com.nokia.mce.request.req_display_state_on 2>/dev/null" || true
             info "MCE display blanking disabled."
 
-            # Wallpaper path fixup — bolide-settings looks for wallpapers at
-            # /usr/share/bolide-launcher/wallpapers/ but the base image has
-            # them at /usr/share/asteroid-launcher/wallpapers/.  Create a
-            # symlink until the image is rebuilt with the proper install path.
-            ssh ${SSH_OPTS} -p 2222 root@localhost \
-                "if [ ! -e /usr/share/bolide-launcher/wallpapers ] && [ -d /usr/share/asteroid-launcher/wallpapers ]; then \
-                     mkdir -p /usr/share/bolide-launcher; \
-                     ln -s /usr/share/asteroid-launcher/wallpapers /usr/share/bolide-launcher/wallpapers; \
-                 fi" || true
+            # Deploy BolideOS wallpapers — the base image doesn't have them
+            # until rebuilt.  SCP the real files from the bolide-launcher repo.
+            local LAUNCHER_REPO="${SCRIPT_DIR}/../bolide-launcher"
+            if [ -d "${LAUNCHER_REPO}/wallpapers/full" ]; then
+                ssh ${SSH_OPTS} -p 2222 root@localhost \
+                    "rm -rf /usr/share/bolide-launcher/wallpapers /usr/share/asteroid-launcher/wallpapers; \
+                     mkdir -p /usr/share/bolide-launcher/wallpapers/{full,140,160,180,200,227}" || true
+                local SCP_OPTS="-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=${HOME}/.ssh/known_hosts_bolideos_emu"
+                scp ${SCP_OPTS} -P 2222 "${LAUNCHER_REPO}"/wallpapers/full/* root@localhost:/usr/share/bolide-launcher/wallpapers/full/ 2>/dev/null || true
+                for sz in 140 160 180 200 227; do
+                    scp ${SCP_OPTS} -P 2222 "${LAUNCHER_REPO}"/wallpapers/${sz}/* root@localhost:/usr/share/bolide-launcher/wallpapers/${sz}/ 2>/dev/null || true
+                done
+                info "BolideOS wallpapers deployed."
+            fi
 
             break
         fi
