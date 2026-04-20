@@ -2,9 +2,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUILD_DIR="${SCRIPT_DIR}/build"
+# The asteroid build tree lives in a sibling 'asteroid/' directory.
+# Override with ASTEROID_DIR env var if your layout differs.
+ASTEROID_DIR="${ASTEROID_DIR:-$(cd "${SCRIPT_DIR}/../asteroid" 2>/dev/null && pwd || echo "${SCRIPT_DIR}")}"
+BUILD_DIR="${ASTEROID_DIR}/build"
 DEPLOY_DIR="${BUILD_DIR}/tmp/deploy/images/emulator"
-PREPARE_BUILD="${SCRIPT_DIR}/prepare-build.sh"
+PREPARE_BUILD="${ASTEROID_DIR}/prepare-build.sh"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -55,11 +58,11 @@ build_image() {
     fi
 
     # prepare-build.sh fetches sources and sets up build/conf if needed
-    cd "${SCRIPT_DIR}"
+    cd "${ASTEROID_DIR}"
     bash "${PREPARE_BUILD}" emulator
 
     bash -c "
-        source '${SCRIPT_DIR}/src/oe-core/oe-init-build-env' '${BUILD_DIR}' > /dev/null
+        source '${ASTEROID_DIR}/src/oe-core/oe-init-build-env' '${BUILD_DIR}' > /dev/null
         bitbake asteroid-image
     "
 
@@ -155,16 +158,16 @@ launch_emulator() {
     # environment to be sourced.
     #
     # On Wayland compositors (e.g. Hyprland), QEMU GTK's native Wayland backend
-    # does not route absolute mouse events to the USB tablet device.
-    # Force GTK to use XWayland (GDK_BACKEND=x11) so the usb-tablet gets
-    # proper absolute coordinates without needing grab-on-hover (which traps
-    # the pointer inside the QEMU window).  virgl 3D acceleration still works
-    # through XWayland's EGL support.
+    # does not route absolute mouse events to the USB tablet device unless
+    # grab-on-hover is used (which traps the pointer).  XWayland (GDK_BACKEND=x11)
+    # crashes with EGL.  Solution: use virtio-tablet-pci + virtio-keyboard-pci
+    # instead of usb-tablet/usb-kbd — virtio input devices work natively with
+    # the Wayland pointer protocol without needing grab.
     local QEMU_DISPLAY_OPT="${DISPLAY_OPT}"
+    local INPUT_DEVICES="-usb -device usb-tablet -usb -device usb-kbd"
     if [ "${XDG_SESSION_TYPE:-}" = "wayland" ] && echo "${DISPLAY_OPT}" | grep -q '^-display gtk'; then
-        export GDK_BACKEND=x11
-        QEMU_DISPLAY_OPT="-display gtk,gl=on,show-cursor=on"
-        info "Wayland detected: forcing XWayland (GDK_BACKEND=x11) for tablet input without grab"
+        INPUT_DEVICES="-device virtio-tablet-pci -device virtio-keyboard-pci"
+        info "Wayland detected: using virtio input devices (no grab needed)"
     fi
 
     "${QEMU_BIN}" \
@@ -172,7 +175,7 @@ launch_emulator() {
         -netdev user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22 \
         -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 \
         -drive file="${ROOTFS}",if=virtio,format=raw,snapshot=on \
-        -usb -device usb-tablet -usb -device usb-kbd \
+        ${INPUT_DEVICES} \
         ${CPU_OPT} -machine q35,i8042=off ${KVM_OPT} -smp 4 -m 512 \
         ${GPU_DEVICE} \
         ${QEMU_DISPLAY_OPT} \
