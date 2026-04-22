@@ -8,7 +8,7 @@
 /system/osso/dsm/display/orientation_change_is_activity=false
 /system/osso/dsm/display/blanking_pause_mode=0
 /system/osso/dsm/display/use_low_power_mode=false
-/system/osso/dsm/display/autosuspend_policy=2
+/system/osso/dsm/display/autosuspend_policy=1
 /system/osso/dsm/display/inhibit_blank_mode=0
 /system/osso/dsm/display/tklock_blank_disable=0
 /system/osso/dsm/event_input/use_fake_double_tap=false
