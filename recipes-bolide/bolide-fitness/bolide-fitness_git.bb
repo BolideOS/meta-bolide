@@ -14,3 +14,5 @@ inherit pkgconfig
 
 DEPENDS += "nemo-qml-plugin-dbus qtdeclarative"
 RDEPENDS:${PN} += "nemo-qml-plugin-dbus bolide-powerd"
+
+FILES:${PN} += "${libdir}/qt5/qml/BolideMetrics/"

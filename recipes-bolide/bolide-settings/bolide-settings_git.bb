@@ -14,3 +14,10 @@ inherit pkgconfig
 
 DEPENDS += "nemo-qml-plugin-systemsettings nemo-qml-plugin-dbus polkit-ceres-rule-reboot"
 RDEPENDS:${PN} += "nemo-qml-plugin-systemsettings nemo-qml-plugin-dbus qtmultimedia-qmlplugins libconnman-qt5-qmlplugins polkit-ceres-rule-reboot bolide-powerd"
+
+FILES:${PN} += "${prefix}/lib/systemd/user/bolide-settings.service"
+
+pkg_postinst:${PN}() {
+    mkdir -p $D${sysconfdir}/systemd/user/default.target.wants
+    ln -sf ${prefix}/lib/systemd/user/bolide-settings.service $D${sysconfdir}/systemd/user/default.target.wants/bolide-settings.service
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=BolideOS Power Optimization
+After=local-fs.target systemd-modules-load.service
+Before=mce.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bolide-power-optimize
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
