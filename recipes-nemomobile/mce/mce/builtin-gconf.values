@@ -1,14 +1,14 @@
 /system/osso/dsm/display/als_enabled=false
 /system/osso/dsm/display/color_profile=hardcoded
-/system/osso/dsm/display/display_dim_timeout=15
-/system/osso/dsm/display/display_blank_timeout=3
+/system/osso/dsm/display/display_dim_timeout=5
+/system/osso/dsm/display/display_blank_timeout=2
 /system/osso/dsm/display/display_brightness=100
 /system/osso/dsm/display/max_display_brightness_levels=100
 /system/osso/dsm/display/wrist_sensor_enabled=false
 /system/osso/dsm/display/orientation_change_is_activity=false
 /system/osso/dsm/display/blanking_pause_mode=0
 /system/osso/dsm/display/use_low_power_mode=false
-/system/osso/dsm/display/autosuspend_policy=1
+/system/osso/dsm/display/autosuspend_policy=2
 /system/osso/dsm/display/inhibit_blank_mode=0
 /system/osso/dsm/display/tklock_blank_disable=0
 /system/osso/dsm/event_input/use_fake_double_tap=false

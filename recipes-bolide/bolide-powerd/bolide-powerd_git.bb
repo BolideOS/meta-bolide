@@ -12,7 +12,7 @@ S = "${WORKDIR}/git"
 
 inherit cmake_qt5 pkgconfig systemd
 
-DEPENDS += "qtbase qtdeclarative qttools-native"
+DEPENDS += "qtbase qtdeclarative qttools-native qtconnectivity sqlite3"
 RDEPENDS:${PN} += "connman bluez5 systemd"
 
 SYSTEMD_SERVICE:${PN} = "bolide-powerd.service"
@@ -23,6 +23,7 @@ FILES:${PN} += " \
     /usr/lib/systemd/system/multi-user.target.wants/ \
     /etc/dbus-1/system.d/ \
     /usr/share/dbus-1/interfaces/ \
+    /usr/share/bolide-powerd/ \
 "
 
 # CMake installs the service file; add the auto-start symlink
