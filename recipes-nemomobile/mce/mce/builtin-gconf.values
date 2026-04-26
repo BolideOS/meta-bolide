@@ -13,4 +13,6 @@
 /system/osso/dsm/display/tklock_blank_disable=0
 /system/osso/dsm/proximity/ps_enabled=false
 /system/osso/dsm/event_input/use_fake_double_tap=false
+/system/osso/dsm/powerkey/actions_single_powerkey_press_when_display_off=unblank
+/system/osso/dsm/powerkey/actions_single_powerkey_press_when_display_on=blank
 /system/osso/dsm/powerkey/actions_gesture4=
