@@ -1,3 +1,6 @@
 #! /bin/sh
-# This file is a placeholder to be replaced by machine-specific preconditions
-exit 0
+# Wait for Android HAL to be ready on hybris machines.
+# Without this, the hwcomposer platform plugin blocks indefinitely.
+if [ -f /usr/lib/systemd/user/android-boot-completed.service ]; then
+    while [ ! -f /dev/.coldboot_done ] ; do sleep 1; done
+fi
