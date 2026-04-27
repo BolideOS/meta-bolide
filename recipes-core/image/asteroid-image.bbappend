@@ -23,4 +23,4 @@ BAD_RECOMMENDATIONS += "kernel-module-nf-conntrack-ipv4"
 
 # Add bolide replacements + new apps
 # bolide-shell combines launcher + settings in one process for faster settings access
-IMAGE_INSTALL:append = " bolide-shell bolide-powerd bolide-fitness bolide-power-config fonts-roboto-condensed"
+IMAGE_INSTALL:append = " bolide-shell bolide-powerd bolide-fitness bolide-power-config fonts-roboto-condensed bolide-journald-persistent"
