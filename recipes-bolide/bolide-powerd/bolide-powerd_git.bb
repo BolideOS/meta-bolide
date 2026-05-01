@@ -15,13 +15,15 @@ inherit cmake_qt5 pkgconfig systemd
 DEPENDS += "qtbase qtdeclarative qttools-native qtconnectivity sqlite3"
 RDEPENDS:${PN} += "connman bluez5 systemd"
 
-SYSTEMD_SERVICE:${PN} = "bolide-powerd.service"
+SYSTEMD_SERVICE:${PN} = "bolide-powerd.service load-wifi-driver.service"
 
 FILES:${PN} += " \
     /usr/bin/ \
     /usr/lib/systemd/system/ \
     /usr/lib/systemd/system/multi-user.target.wants/ \
+    /usr/lib/systemd/system/network.target.wants/ \
     /etc/dbus-1/system.d/ \
+    /etc/modprobe.d/ \
     /usr/share/dbus-1/interfaces/ \
     /usr/share/bolide-powerd/ \
 "
@@ -31,4 +33,6 @@ do_install:append() {
     install -d ${D}/usr/lib/systemd/system/multi-user.target.wants/
     ln -sf /usr/lib/systemd/system/bolide-powerd.service \
         ${D}/usr/lib/systemd/system/multi-user.target.wants/bolide-powerd.service
+    ln -sf /usr/lib/systemd/system/load-wifi-driver.service \
+        ${D}/usr/lib/systemd/system/multi-user.target.wants/load-wifi-driver.service
 }

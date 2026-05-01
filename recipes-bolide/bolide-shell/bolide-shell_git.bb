@@ -30,7 +30,7 @@ RPROVIDES:${PN} = "bolide-launcher bolide-settings"
 # Downgrade QML import versions for Qt 5.12 compatibility
 # Must also cover launcher and settings QML files referenced via QRC
 do_configure:prepend() {
-    for dir in ${S} ${S}/../bolide-launcher ${S}/../bolide-settings ; do
+    for dir in ${S} ; do
         if [ -d "$dir" ]; then
             find "$dir" -name "*.qml" | xargs sed -i \
                 -e 's/import QtQuick 2\.\(1[3-9]\|[2-9][0-9]\)/import QtQuick 2.12/g' \
@@ -43,16 +43,16 @@ do_configure:prepend() {
 
 do_install:append() {
     # Install launcher translations
-    if ls ${S}/../bolide-launcher/i18n/bolide-launcher.*.ts 1>/dev/null 2>&1; then
-        lrelease -idbased ${S}/../bolide-launcher/i18n/bolide-launcher.*.ts
+    if ls ${S}/i18n/bolide-launcher.*.ts 1>/dev/null 2>&1; then
+        lrelease -idbased ${S}/i18n/bolide-launcher.*.ts
         install -d ${D}/usr/share/translations/
-        cp ${S}/../bolide-launcher/i18n/bolide-launcher.*.qm ${D}/usr/share/translations/
+        cp ${S}/i18n/bolide-launcher.*.qm ${D}/usr/share/translations/
     fi
 
     # Install settings translations
-    if ls ${S}/../bolide-settings/i18n/bolide-settings.*.ts 1>/dev/null 2>&1; then
-        lrelease -idbased ${S}/../bolide-settings/i18n/bolide-settings.*.ts
-        cp ${S}/../bolide-settings/i18n/bolide-settings.*.qm ${D}/usr/share/translations/
+    if ls ${S}/i18n/bolide-settings.*.ts 1>/dev/null 2>&1; then
+        lrelease -idbased ${S}/i18n/bolide-settings.*.ts
+        cp ${S}/i18n/bolide-settings.*.qm ${D}/usr/share/translations/
     fi
 
     # Install service file
@@ -68,8 +68,22 @@ do_install:append() {
 
     install -d ${D}/usr/share/lipstick/
     install -m 0644 ${UNPACKDIR}/lipstick.conf ${D}/usr/share/lipstick/lipstick.conf
+
+    # Install compositor environment snippet (QML import path)
+    install -d ${D}/var/lib/environment/compositor/
+    echo 'QML2_IMPORT_PATH=/usr/lib/qt5/qml' > ${D}/var/lib/environment/compositor/bolide.conf
+
+    # Install watchfaces and applauncher QML files
+    install -d ${D}/usr/share/bolide-launcher/watchfaces/
+    install -d ${D}/usr/share/bolide-launcher/applauncher/
+    if [ -d "${S}/src/watchfaces" ]; then
+        install -m 0644 ${S}/src/watchfaces/*.qml ${D}/usr/share/bolide-launcher/watchfaces/
+    fi
+    if [ -d "${S}/src/applauncher" ]; then
+        install -m 0644 ${S}/src/applauncher/*.qml ${D}/usr/share/bolide-launcher/applauncher/
+    fi
 }
 
 FILES:${PN} += "/usr/share/bolide-launcher/ /usr/lib/systemd/user/ \
     /usr/share/translations/ /usr/lib/systemd/user/default.target.wants/ \
-    /usr/bin/ /usr/share/lipstick/"
+    /usr/bin/ /usr/share/lipstick/ /var/lib/environment/compositor/"

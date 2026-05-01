@@ -11,9 +11,12 @@ for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq; do
 done
 
 # --- Enable kernel autosleep ---
-if [ -f /sys/power/autosleep ]; then
-    echo mem > /sys/power/autosleep
-fi
+# [DISABLED]: This forces the watch into deep sleep before the UI can even load, 
+# breaking hardware buttons and causing a permanent black screen.
+# if [ -f /sys/power/autosleep ]; then
+#     echo mem > /sys/power/autosleep
+# fi
+
 
 # --- Console suspend (don't wake for printk) ---
 if [ -f /sys/module/printk/parameters/console_suspend ]; then
@@ -91,17 +94,21 @@ for f in /sys/class/bluetooth/hci*/idle_timeout; do
 done
 
 # --- USB autosuspend ---
-for f in /sys/bus/usb/devices/*/power/autosuspend; do
-    echo 1 > "$f" 2>/dev/null
-done
-for f in /sys/bus/usb/devices/*/power/control; do
-    echo auto > "$f" 2>/dev/null
-done
+# [DISABLED]: This forcibly unbinds ADB and kills USB connectivity
+# immediately on boot!
+# for f in /sys/bus/usb/devices/*/power/autosuspend; do
+#     echo 1 > "$f" 2>/dev/null
+# done
+# for f in /sys/bus/usb/devices/*/power/control; do
+#     echo auto > "$f" 2>/dev/null
+# done
 
 # --- PCI/bus power management ---
-for f in /sys/bus/platform/devices/*/power/control; do
-    echo auto > "$f" 2>/dev/null
-done
+# [DISABLED]: Blindly putting all platform devices on "auto" suspends the
+# touchscreen controller, display controller, and hardware buttons!
+# for f in /sys/bus/platform/devices/*/power/control; do
+#     echo auto > "$f" 2>/dev/null
+# done
 
 # --- Disable kernel tracing ---
 if [ -f /sys/kernel/debug/tracing/tracing_on ]; then
