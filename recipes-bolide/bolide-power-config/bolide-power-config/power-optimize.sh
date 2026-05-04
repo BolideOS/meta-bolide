@@ -93,6 +93,19 @@ for f in /sys/class/bluetooth/hci*/idle_timeout; do
     echo 3000 > "$f" 2>/dev/null
 done
 
+# --- Modem subsystem: shut down entirely (no LTE on this watch) ---
+# The modem PIL firmware loads at boot and causes periodic wakeups even
+# with ofono masked. Find the modem subsystem and request shutdown.
+for d in /sys/bus/msm_subsys/devices/subsys*; do
+    if [ -f "$d/name" ] && [ "$(cat "$d/name" 2>/dev/null)" = "modem" ]; then
+        if [ -f "$d/shutdown" ]; then
+            echo 1 > "$d/shutdown" 2>/dev/null
+            echo "power-optimize: modem subsystem shut down"
+        fi
+        break
+    fi
+done
+
 # --- USB autosuspend ---
 # [DISABLED]: This forcibly unbinds ADB and kills USB connectivity
 # immediately on boot!

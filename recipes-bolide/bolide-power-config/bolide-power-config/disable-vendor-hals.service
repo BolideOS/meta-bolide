@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable unnecessary vendor HALs (NFC, GNSS, BT)
+After=android-hal-init.service
+Before=bolide-power-optimize.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/bolide-disable-vendor-hals
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
